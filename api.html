@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Master Engine | Full API Reference</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono&display=swap');
+
+        :root {
+            --bg: #09090b;
+            --surface: #18181b;
+            --border: #27272a;
+            --primary: #00f2ff;
+            --accent: #8b5cf6;
+            --text: #e4e4e7;
+            --text-muted: #a1a1aa;
+            --code-bg: #000000;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; display: flex; }
+
+        /* SIDEBAR */
+        aside { width: 280px; height: 100vh; position: fixed; top: 0; left: 0; background: var(--surface); border-right: 1px solid var(--border); padding: 2rem 1.5rem; overflow-y: auto; }
+        aside h2 { font-size: 1.2rem; color: var(--text); margin-bottom: 1.5rem; font-weight: 700; letter-spacing: 1px; }
+        aside a { display: block; color: var(--text-muted); text-decoration: none; margin-bottom: 0.8rem; font-size: 0.95rem; transition: 0.2s; }
+        aside a:hover { color: var(--primary); }
+        aside .back-btn { display: inline-block; padding: 0.5rem 1rem; background: var(--border); border-radius: 6px; color: var(--text); margin-bottom: 2rem; font-size: 0.9rem; font-weight: 600; }
+        aside .back-btn:hover { background: var(--primary); color: #000; }
+
+        /* MAIN CONTENT */
+        main { margin-left: 280px; padding: 3rem 5%; max-width: 1200px; width: 100%; }
+        h1 { font-size: 3rem; margin-bottom: 1rem; background: linear-gradient(90deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        p.subtitle { font-size: 1.1rem; color: var(--text-muted); margin-bottom: 3rem; }
+
+        section { margin-bottom: 4rem; }
+        h2.section-title { font-size: 1.8rem; border-bottom: 2px solid var(--border); padding-bottom: 0.5rem; margin-bottom: 1.5rem; color: #fff; }
+        
+        .api-block { margin-bottom: 1.5rem; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+        .api-signature { background: rgba(255,255,255,0.03); padding: 1rem 1.5rem; font-family: 'JetBrains Mono', monospace; font-size: 1rem; color: var(--primary); font-weight: 600; border-bottom: 1px solid var(--border); }
+        .api-desc { padding: 1rem 1.5rem; color: var(--text-muted); }
+        
+        pre { background: var(--code-bg); padding: 1rem 1.5rem; font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; color: #a9ff68; overflow-x: auto; border-top: 1px solid var(--border); }
+        code { font-family: 'JetBrains Mono', monospace; background: rgba(255,255,255,0.1); padding: 0.2rem 0.4rem; border-radius: 4px; font-size: 0.9em; color: #fff; }
+
+        .secret-flag { border: 1px solid #ef4444; background: rgba(239, 68, 68, 0.05); }
+        .secret-flag .api-signature { color: #ef4444; border-bottom-color: rgba(239, 68, 68, 0.2); }
+
+        @media (max-width: 900px) {
+            body { flex-direction: column; }
+            aside { width: 100%; height: auto; position: static; border-right: none; border-bottom: 1px solid var(--border); padding: 1.5rem; }
+            main { margin-left: 0; padding: 2rem 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <aside>
+        <a href="index.html" class="back-btn">← Назад на Главную</a>
+        <h2>КАТЕГОРИИ API</h2>
+        <a href="#system">Система и Утилиты</a>
+        <a href="#input">Ввод (Тач, Геймпад, Текст)</a>
+        <a href="#render-basic">Базовый Рендер</a>
+        <a href="#render-sprites">Спрайты и Текстуры</a>
+        <a href="#hypercar">Hypercar Batching</a>
+        <a href="#camera">Камера и Эффекты</a>
+        <a href="#audio">Звук и Музыка</a>
+        <a href="#math">Продвинутая Математика</a>
+        <a href="#network">Сеть (ENet)</a>
+        <a href="#db">База данных (SQLite)</a>
+        <a href="#crypto">Криптография и Сохранения</a>
+        <a href="#framework">ECS, Сцены и Таймеры</a>
+        <a href="#box2d">Box2D Физика</a>
+        <a href="#secrets">Секретные флаги</a>
+    </aside>
+
+    <main>
+        <h1>Master Engine API</h1>
+        <p class="subtitle">Полный справочник по всем функциям движка (v7.6.3).</p>
+
+        <section id="system">
+            <h2 class="section-title">Система и Утилиты</h2>
+            
+            <div class="api-block">
+                <div class="api-signature">master.screen_w, master.screen_h</div>
+                <div class="api-desc">Глобальные переменные. Содержат текущую ширину и высоту экрана устройства в пикселях.</div>
+            </div>
+            
+            <div class="api-block">
+                <div class="api-signature">master.getScreenCenter() -> x, y</div>
+                <div class="api-desc">Возвращает координаты центра экрана.</div>
+            </div>
+
+            <div class="api-block">
+                <div class="api-signature">master.getTime() -> float</div>
+                <div class="api-desc">Время в секундах, прошедшее с момента старта движка.</div>
+            </div>
+
+            <div class="api-block">
+                <div class="api-signature">master.getFPS() -> float</div>
+                <div class="api-desc">Возвращает текущее количество кадров в секунду (FPS).</div>
+            </div>
+
+            <div class="api-block">
+                <div class="api-signature">master.setTimeScale(scale)</div>
+                <div class="api-desc">Масштаб времени. По умолчанию 1.0. Установите 0.5 для замедления времени (слоу-мо) в 2 раза.</div>
+            </div>
+
+            <div class="api-block">
+                <div class="api-signature">master.optimizeGC() / master.collectGarbage()</div>
+                <div class="api-desc">Настройка сборщика мусора Lua. Рекомендуется вызывать <code>optimizeGC()</code> один раз при старте для предотвращения фризов.</div>
+            </div>
+
+            <div class="api-block">
+                <div class="api-signature">master.getLuaMemory() -> float</div>
+                <div class="api-desc">Возвращает объем оперативной памяти (в Мегабайтах), используемый скриптами Lua.</div>
+            </div>
+
+            <div class="api-block">
+                <div class="api-signature">master.getCPUs(), master.getRAM(), master.getBattery(), master.getPlatform()</div>
+                <div class="api-desc">Информация о железе: количество ядер, объем ОЗУ устройства, заряд батареи (в %) и платформа.</div>
+            </div>
+
+            <div class="api-block">
+                <div class="api-signature">master.quit()</div>
+                <div class="api-desc">Мгновенное закрытие игры/движка.</div>
+            </div>
+
+            <div class="api-block">
+                <div class="api-signature">master.openURL(url) / master.showMessage(title, text)</div>
+                <div class="api-desc">Открывает системный браузер по ссылке или показывает нативное диалоговое окно Android.</div>
+            </div>
+        </section>
+
+        <section id="input">
+            <h2 class="section-title">Ввод (Тач, Геймпад, Текст)</h2>
+            
+            <div class="api-block">
+                <div class="api-signature">master.getTouch() -> x, y, is_pressed</div>
+                <div class="api-desc">Возвращает координаты первого (главного) касания и флаг, нажат ли экран.</div>
+            </div>
+
+            <div class="api-block">
+                <div class="api-signature">master.getTouches() -> table</div>
+                <div class="api-desc">Поддержка мультитача. Возвращает массив таблиц (пальцев). Пример: <code>for i, t in ipairs(touches) do print(t.id, t.x, t.y) end</code></div>
+            </div>
+
+            <div class="api-block">
+                <div class="api-signature">master.getGamepadAxis(id) -> float / master.getGamepadButton(id) -> bool</div>
+                <div class="api-desc">Чтение состояния подключенного Bluetooth/USB геймпада (от -1.0 до 1.0 для стиков).</div>
+            </div>
+
+            <div class="api-block">
+                <div class="api-signature">master.gamepadRumble(low_freq, high_freq, ms)</div>
+                <div class="api-desc">Вибрация геймпада (значения от 0.0 до 1.0 на указанное количество миллисекунд).</div>
+            </div>
+
+            <div class="api-block">
+                <div class="api-signature">master.startTextInput(), master.stopTextInput(), master.getTextInput(), master.clearTextInput()</div>
+                <div class="api-desc">Управление системной клавиатурой. <code>getTextInput()</code> возвращает строку, которую напечатал пользователь.</div>
+            </div>
+
+            <div class="api-block">
+                <div class="api-signature">master.getClipboardText() -> string / master.setClipboardText(text)</div>
+                <div class="api-desc">Чтение и запись системного буфера обмена Android.</div>
+            </div>
+        </section>
+
+        <section id="render-basic">
+            <h2 class="section-title">Базовый Рендер и Фигуры</h2>
+            <p>Рисование стандартных геометрических фигур. Поддерживает альфа-канал и автоматическое применение камеры.</p>
+
+            <div class="api-block">
+                <div class="api-signature">master.clear(r, g, b)</div>
+                <div class="api-desc">Очистка экрана заданным цветом. Обязательно вызывать в начале <code>master.draw()</code>.</div>
+            </div>
+
+            <div class="api-block">
+                <div class="api-signature">master.drawRect(x, y, w, h, r, g, b) / master.drawRectAlpha(..., a)</div>
+                <div class="api-desc">Отрисовка закрашенного прямоугольника (без прозрачности и с прозрачностью 0-255).</div>
+            </div>
+
+            <div class="api-block">
+                <div class="api-signature">master.drawLine(x1, y1, x2, y2, r, g, b) / master.drawThickLine(..., thick, r, g, b, a)</div>
+                <div class="api-desc">Отрисовка линии толщиной 1 пиксель или линии с заданной толщиной и прозрачностью.</div>
+            </div>
+
+            <div class="api-block">
+                <div class="api-signature">master.drawCircle(x, y, radius, r, g, b)</div>
+                <div class="api-desc">Рисует окружность.</div>
+            </div>
+
+            <div class="api-block">
+                <div class="api-signature">master.drawTriangle(x1,y1, x2,y2, x3,y3, r,g,b) / master.drawBezier(x1,y1, x2,y2, x3,y3, r,g,b)</div>
+                <div class="api-desc">Отрисовка контура треугольника и плавной кривой Безье по 3 точкам.</div>
+            </div>
+
+            <div class="api-block">
+                <div class="api-signature">master.drawPolygon(points_table, r, g, b)</div>
+                <div class="api-desc">Отрисовка многоугольника. Принимает массив точек: <code>{{x=0,y=0}, {x=50,y=10}, ...}</code></div>
+            </div>
+            
+            <div class="api-block">
+                <div class="api-signature">master.setPixel(x, y, r, g, b)</div>
+                <div class="api-desc">Закрашивает один конкретный пиксель на экране.</div>
+            </div>
+        </section>
+
+        <section id="render-sprites">
+            <h2 class="section-title">Текстуры, Спрайты и Текст</h2>
+            
+            <div class="api-block">
+                <div class="api-signature">master.loadImage(filename) -> pointer</div>
+                <div class="api-desc">Загружает изображение (PNG, JPG) из вашего .zip архива. Кэшируется в NDK.</div>
+            </div>
+
+            <div class="api-block">
+                <div class="api-signature">master.drawSprite(tex, x, y, w, h)</div>
+                <div class="api-desc">Обычная отрисовка текстуры.</div>
+            </div>
+
+            <div class="api-block">
+                <div class="api-signature">master.drawSpriteEx(tex, x, y, w, h, angle, flip_x, flip_y)</div>
+                <div class="api-desc">Отрисовка с поворотом (в градусах) и возможностью отзеркалить по осям.</div>
+            </div>
+
+            <div class="api-block">
+                <div class="api-signature">master.drawSpritePart(tex, sx, sy, sw, sh, dx, dy, dw, dh)</div>
+                <div class="api-desc">Вырезает кусок из текстуры (Source X/Y/W/H) и рисует его на экране (Dest X/Y/W/H). Идеально для анимаций.</div>
+            </div>
+
+            <div class="api-block">
+                <div class="api-signature">master.setTextureAlpha(tex, a) / master.setSpriteTint(tex, r, g, b)</div>
+                <div class="api-desc">Устанавливает глобальную прозрачность (0-255) или цветовое тонирование (Tint) для текстуры.</div>
+            </div>
+
+            <div class="api-block">
+                <div class="api-signature">master.setBlendMode(tex, mode)</div>
+                <div class="api-desc">Режим смешивания. Доступны: "blend" (обычный), "add" (добавление/свет), "mod" (умножение/тени).</div>
+            </div>
+
+            <div class="api-block">
+                <div class="api-signature">master.loadFont(filename, size) -> pointer</div>
+                <div class="api-desc">Загружает .ttf шрифт из архива.</div>
+            </div>
+
+            <div class="api-block">
+                <div class="api-signature">master.drawSystemText(text, x, y, r, g, b, size) / master.drawText(font_ptr, text, x, y, r, g, b)</div>
+                <div class="api-desc">Рисует текст стандартным шрифтом движка (system) или вашим загруженным шрифтом.</div>
+            </div>
+            
+            <div class="api-block">
+                <div class="api-signature">master.getTextWidth(text, size) -> float</div>
+                <div class="api-desc">Вычисляет ширину строки в пикселях. Полезно для выравнивания текста по центру.</div>
+            </div>
+        </section>
+
+        <section id="hypercar">
+            <h2 class="section-title">Bypass Protocol: Hypercar Batching</h2>
+            <p>Система аппаратного рендера геометрии (до 50,000+ объектов). Избегайте ООП при отрисовке, используйте Bypass функции.</p>
+
+            <div class="api-block">
+                <div class="api-signature">master.createSpriteBatch(texture_ptr) -> BatchObject</div>
+                <div class="api-desc">Создает объект батчера для указанной текстуры (или канваса).</div>
+            </div>
+
+            <div class="api-block">
+                <div class="api-signature">master.setBatch(BatchObject)</div>
+                <div class="api-desc">Устанавливает текущий батчер в ядре C++. Открывает Bypass канал.</div>
+            </div>
+
+            <div class="api-block">
+                <div class="api-signature">master.addBatchFast(x, y, w, h, r, g, b, a)</div>
+                <div class="api-desc">Сверхскоростная (плоская) функция добавления прямоугольника/спрайта в буфер видеокарты.</div>
+            </div>
+<pre>
+<span class="comment">-- Как использовать Батч (ООП методы тоже работают, но они медленнее):</span>
+batch:clear()
+master.setBatch(batch)
+for i=1, 30000 do
+    master.addBatchFast(x, y, 16, 16, 255, 255, 255, 255)
+end
+batch:draw()
+</pre>
+        </section>
+
+        <section id="camera">
+            <h2 class="section-title">Камера, Канвасы и Эффекты</h2>
+            
+            <div class="api-block">
+                <div class="api-signature">master.setCamera(x, y, zoom) / master.resetCamera()</div>
+                <div class="api-desc">Сдвигает и масштабирует весь рендер. Обычно передаются координаты игрока. <code>resetCamera()</code> сбрасывает настройки (нужно вызывать перед отрисовкой UI).</div>
+            </div>
+
+            <div class="api-block">
+                <div class="api-signature">master.screenShake(intensity, duration)</div>
+                <div class="api-desc">Аппаратная тряска экрана. `intensity` — сила дрожания в пикселях, `duration` — время в секундах.</div>
+            </div>
+
+            <div class="api-block">
+                <div class="api-signature">master.createCanvas(w, h) -> texture_ptr</div>
+                <div class="api-desc">Создает пустую текстуру-канвас в видеопамяти. На ней можно рисовать и использовать её как обычный спрайт.</div>
+            </div>
+
+            <div class="api-block">
+                <div class="api-signature">master.setCanvas(texture_ptr) / master.resetCanvas()</div>
+                <div class="api-desc">Перенаправляет весь рендер движка не на экран, а внутрь текстуры-канваса. Сброс возвращает рендер на экран.</div>
+            </div>
+
+            <div class="api-block">
+                <div class="api-signature">master.takeScreenshot(filename)</div>
+                <div class="api-desc">Делает скриншот игры и сохраняет его во внутреннюю папку приложения с указанным именем (напр. "screen.png").</div>
+            </div>
+            
+            <div class="api-block">
+                <div class="api-signature">master.emitParticlePro(x, y, vx, vy, life, start_size, end_size, sr, sg, sb, sa, er, eg, eb, ea, spin, grav, fric)</div>
+                <div class="api-desc">Генерация продвинутой частицы. Автоматически обрабатывается в C++. Обязательно вызывайте <code>master.updateAndDrawParticles()</code> каждый кадр!</div>
+            </div>
+        </section>
+
+        <section id="audio">
+            <h2 class="section-title">Звук и Музыка (SDL Mixer)</h2>
+            
+            <div class="api-block">
+                <div class="api-signature">master.loadSound(filename) -> ptr / master.playSound(ptr)</div>
+                <div class="api-desc">Загружает звуковой эффект (.wav, .ogg) и проигрывает его. Звуки могут накладываться друг на друга.</div>
+            </div>
+
+            <div class="api-block">
+                <div class="api-signature">master.loadMusic(filename) -> ptr / master.playMusic(ptr, loops)</div>
+                <div class="api-desc">Загружает фоновую музыку (.mp3, .ogg). <code>loops</code> = -1 для бесконечного повтора.</div>
+            </div>
+
+            <div class="api-block">
+                <div class="api-signature">master.pauseMusic() / master.resumeMusic() / master.stopMusic()</div>
+                <div class="api-desc">Управление потоком фоновой музыки.</div>
+            </div>
+
+            <div class="api-block">
+                <div class="api-signature">master.isMusicPlaying() -> bool / master.setVolume(0-128)</div>
+                <div class="api-desc">Проверка проигрывания и глобальная установка громкости.</div>
+            </div>
+        </section>
+
+        <section id="math">
+            <h2 class="section-title">Продвинутая Математика</h2>
+            <p>Все функции вынесены в C++ для мгновенного выполнения.</p>
+            
+            <div class="api-block">
+                <div class="api-signature">master.distance(x1,y1, x2,y2) / master.getAngleDeg(x1,y1, x2,y2)</div>
+                <div class="api-desc">Дистанция между точками и вычисление угла в градусах.</div>
+            </div>
+
+            <div class="api-block">
+                <div class="api-signature">master.moveAtAngle(x, y, angle_deg, distance) -> new_x, new_y</div>
+                <div class="api-desc">Вычисляет новые координаты при движении в определенном направлении.</div>
+            </div>
+
+            <div class="api-block">
+                <div class="api-signature">master.lerp(a, b, t) / master.lerpAngle(a, b, t) / master.colorLerp(r1,g1,b1, r2,g2,b2, t)</div>
+                <div class="api-desc">Линейная интерполяция значений, углов (с правильным переходом через 360) и цветов.</div>
+            </div>
+
+            <div class="api-block">
+                <div class="api-signature">master.vecNormalize(x, y) -> nx, ny / master.vecLength(x, y) / master.vecDot(x1,y1,x2,y2)</div>
+                <div class="api-desc">Векторная математика: нормализация, длина вектора и скалярное произведение.</div>
+            </div>
+
+            <div class="api-block">
+                <div class="api-signature">master.rectIntersect(x1,y1,w1,h1, x2,y2,w2,h2) / master.circleIntersect(x1,y1,r1, x2,y2,r2)</div>
+                <div class="api-desc">Проверка коллизий AABB (прямоугольники) и окружностей. Возвращает <code>true/false</code>.</div>
+            </div>
+
+            <div class="api-block">
+                <div class="api-signature">master.noise(x, y) / master.perlin2D(x, y)</div>
+                <div class="api-desc">Генерация шума (Perlin Noise) для создания процедурных ландшафтов. Возвращает значения от -1.0 до 1.0.</div>
+            </div>
+            
+            <div class="api-block">
+                <div class="api-signature">master.colorHSV(h, s, v) -> r, g, b</div>
+                <div class="api-desc">Конвертация цветовой модели HSV (Hue, Saturation, Value) в RGB. Идеально для переливающихся цветов.</div>
+            </div>
+        </section>
+
+        <section id="network">
+            <h2 class="section-title">Сеть (ENet Мультиплеер)</h2>
+            
+            <div class="api-block">
+                <div class="api-signature">master.netConnect(ip_string, port) -> bool</div>
+                <div class="api-desc">Подключается к ENet серверу (UDP протокол). Возвращает true в случае успеха.</div>
+            </div>
+
+            <div class="api-block">
+                <div class="api-signature">master.netSend(data_string)</div>
+                <div class="api-desc">Отправляет строку данных на сервер (используйте <code>master.jsonStringify()</code> для таблиц). Отправка надежная (Reliable).</div>
+            </div>
+
+            <div class="api-block">
+                <div class="api-signature">master.netReceive() -> string</div>
+                <div class="api-desc">Принимает входящие пакеты. Возвращает строку или пустую строку "", если новых данных нет. Должна вызываться каждый кадр в цикле.</div>
+            </div>
+        </section>
+
+        <section id="db">
+            <h2 class="section-title">Базы данных (SQLite)</h2>
+            <p>Встроенная локальная база данных на устройстве.</p>
+            
+            <div class="api-block">
+                <div class="api-signature">master.dbOpen(filename) / master.dbClose()</div>
+                <div class="api-desc">Открывает файл БД (например, "save.db"). Если файла нет, он будет создан.</div>
+            </div>
+
+            <div class="api-block">
+                <div class="api-signature">master.dbExecute(sql_query_string)</div>
+                <div class="api-desc">Выполняет SQL-запрос, который не возвращает данные (CREATE TABLE, INSERT, UPDATE).</div>
+            </div>
+
+            <div class="api-block">
+                <div class="api-signature">master.dbQuery(sql_query_string) -> table</div>
+                <div class="api-desc">Выполняет SELECT-запрос и возвращает массив таблиц (строк) с результатами из БД.</div>
+            </div>
+        </section>
+
+        <section id="crypto">
+            <h2 class="section-title">Криптография, JSON и Сохранения</h2>
+            
+            <div class="api-block">
+                <div class="api-signature">master.saveData(key, string_val) / master.loadData(key) -> string</div>
+                <div class="api-desc">Быстрое сохранение строк в защищенную папку приложения (SharedPreferences аналог).</div>
+            </div>
+
+            <div class="api-block">
+                <div class="api-signature">master.jsonParse(json_string) -> table / master.jsonStringify(lua_table) -> string</div>
+                <div class="api-desc">Быстрая конвертация таблиц Lua в JSON и обратно через библиотеку cJSON.</div>
+            </div>
+
+            <div class="api-block">
+                <div class="api-signature">master.hashString(text) -> hex_string</div>
+                <div class="api-desc">Возвращает SHA-256 хэш строки.</div>
+            </div>
+
+            <div class="api-block">
+                <div class="api-signature">master.signData(data, secret_key) -> hex_string</div>
+                <div class="api-desc">Подписывает данные секретным ключом. Используется для защиты сохранений от взлома (анти-чит).</div>
+            </div>
+        </section>
+
+        <section id="framework">
+            <h2 class="section-title">Core Framework (Lua Подсистема)</h2>
+            
+            <div class="api-block">
+                <div class="api-signature">master.ecs.create({components...}) / master.ecs.update(dt) / master.ecs.draw()</div>
+                <div class="api-desc">Встроенная Entity-Component-System. У каждой сущности могут быть функции <code>update(self, dt)</code> и <code>draw(self)</code>. Установка <code>entity.dead = true</code> удалит её.</div>
+            </div>
+
+            <div class="api-block">
+                <div class="api-signature">master.timers.setTimeout(sec, func) / master.timers.setInterval(sec, func)</div>
+                <div class="api-desc">Асинхронные таймеры. Требуют вызова <code>master.timers.update(dt)</code> в главном цикле.</div>
+            </div>
+
+            <div class="api-block">
+                <div class="api-signature">master.events.on(name, func) / master.events.emit(name, args...)</div>
+                <div class="api-desc">Глобальная шина событий для связи разных частей кода без сильной связности.</div>
+            </div>
+
+            <div class="api-block">
+                <div class="api-signature">master.path.initGrid(w, h) / master.path.setObstacle(x, y, is_obs) / master.path.find(sx, sy, ex, ey)</div>
+                <div class="api-desc">Встроенный алгоритм поиска пути A* (A-Star) на сетке. Возвращает массив узлов.</div>
+            </div>
+            
+            <div class="api-block">
+                <div class="api-signature">master.anim.new(frames_table, speed) / master.anim.update(anim, dt) / master.anim.getFrame(anim)</div>
+                <div class="api-desc">Легковесная стейт-машина для переключения кадров (Quad'ов) спрайта по таймеру.</div>
+            </div>
+        </section>
+
+        <section id="box2d">
+            <h2 class="section-title">Индустриальная физика (Box2D)</h2>
+            <p>Ядро включает полную реализацию физики Box2D. Работает через ООП-биндинги Sol2.</p>
+            
+            <div class="api-block">
+                <div class="api-signature">b2World(b2Vec2_gravity)</div>
+                <div class="api-desc">Создание физического мира. Методы: <code>Step(dt, v_iter, p_iter)</code>, <code>CreateBody(b2BodyDef)</code>, <code>DestroyBody(body)</code>, <code>RayCast(x1,y1, x2,y2, callback)</code>.</div>
+            </div>
+
+            <div class="api-block">
+                <div class="api-signature">b2BodyDef / b2Body</div>
+                <div class="api-desc">Определение тела и само тело. Типы (type): <code>b2_staticBody</code>, <code>b2_dynamicBody</code>, <code>b2_kinematicBody</code>. Методы тела: <code>GetPosition()</code>, <code>CreateFixture(fixtureDef)</code>, <code>ApplyLinearImpulse(...)</code>.</div>
+            </div>
+
+            <div class="api-block">
+                <div class="api-signature">b2PolygonShape / b2CircleShape</div>
+                <div class="api-desc">Формы коллайдеров. У полигона есть метод <code>SetAsBox(half_w, half_h)</code>. У круга: <code>m_radius</code>.</div>
+            </div>
+
+            <div class="api-block">
+                <div class="api-signature">b2FixtureDef</div>
+                <div class="api-desc">Определяет физические свойства: <code>shape</code>, <code>density</code> (плотность), <code>restitution</code> (отскок), <code>friction</code> (трение), <code>isSensor</code>.</div>
+            </div>
+        </section>
+        
+        <section id="secrets" class="secret-flag">
+            <h2 class="section-title" style="color: #ef4444;">Секретные флаги (Internal)</h2>
+            
+            <div class="api-block" style="border-color: rgba(239, 68, 68, 0.3);">
+                <div class="api-signature">!master.hidedErdisplay</div>
+                <div class="api-desc"><b>Спец. Режим (Игнорирование крашей):</b> Если написать эту точную строку в любом месте файла <code>main.lua</code> в виде комментария (например: <code>-- !master.hidedErdisplay</code>), движок не будет показывать "Синего Экрана Смерти". При возникновении критических ошибок Lua, движок <b>не покажет</b> экран с логом ошибки.</div>
+            </div>
+        </section>
+
+    </main>
+
+</body>
+</html>
