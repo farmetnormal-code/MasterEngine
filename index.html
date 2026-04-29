@@ -72,7 +72,7 @@
         <div class="logo">MASTER ENGINE</div>
         <div class="nav-links">
             <a href="#about">Возможности</a>
-            <a href="api.html">API Документация</a>            
+            <a href="api.html">API Документация</a>
             <a href="#download">Скачать</a>
             <a href="https://t.me/talkswitch">Сообщество</a>
         </div>
@@ -81,9 +81,8 @@
     <header class="hero">
         <h1>Мастер Движок.<br>Для огромных игр.</h1>
         <p>Ультимативный C++ фреймворк для Android. Спроектирован для работы с колоссальными нагрузками: физика, тысячи спрайтов и бесперебойная логика.</p>
-        <a href="#download" class="btn btn-primary">Скачать APK v7.6.3</a>
+        <a href="https://github.com/farmetnormal-code/MasterEngine/releases/download/7.6.3/MasterEngine7.6.3.apk" class="btn btn-primary">Скачать APK v7.6.3</a>
         <a href="api.html" class="btn">Полный справочник API</a>
-
     </header>
 
     <div class="content-wrapper">
@@ -93,11 +92,10 @@
             <a href="#download">📥 Установка</a>
             
             <h3 style="margin-top: 2rem;">API Документация</h3>
-<a href="api.html">📚 Открыть полный справочник</a>
-<a href="api.html#hypercar">🚀 Bypass Protocol</a>
-<a href="api.html#box2d">📦 Физика Box2D</a>
-<a href="api.html#network">🌐 Мультиплеер</a>
-            
+            <a href="api.html">📚 Открыть полный справочник</a>
+            <a href="api.html#hypercar">🚀 Bypass Protocol</a>
+            <a href="api.html#box2d">📦 Физика Box2D</a>
+            <a href="api.html#network">🌐 Мультиплеер</a>
         </aside>
 
         <main>
@@ -118,12 +116,12 @@
                 <div class="download-box">
                     <h3>Master Engine Player v7.6.3</h3>
                     <p>Требуется Android 8.0 или выше. Встроенная поддержка геймпадов и сенсорных экранов.</p>
-                    <a href="https://github.com/farmetnormal-code/MasterEngine/releases/download/7.6.3/Master Engine v7.6.3.apk" class="btn btn-primary">Скачать (.apk)</a>
+                    <a href="https://github.com/farmetnormal-code/MasterEngine/releases/download/7.6.3/MasterEngine7.6.3.apk" class="btn btn-primary">Скачать (.apk)</a>
                 </div>
             </section>
 
             <section id="docs">
-                <h2 id="docs-core">1. Основы (Core API)</h2>
+                <h2 id="docs-core">Быстрый старт</h2>
                 <p>Главная функция движка, которая вызывается каждый кадр — <code>master.draw()</code>. В ней пишется базовая логика игры.</p>
 <pre>
 <span class="comment">-- Получить Delta Time (время между кадрами для плавной логики)</span>
@@ -132,83 +130,11 @@ local dt = master.dt
 <span class="comment">-- Очистка экрана (R, G, B)</span>
 master.clear(15, 15, 20)
 
-<span class="comment">-- Базовая отрисовка без аппаратного ускорения</span>
-master.drawRect(x, y, w, h, r, g, b)
-master.drawCircle(x, y, radius, r, g, b)
-master.drawSystemText("Текст", x, y, r, g, b, size)
-master.drawFPS(x, y)
+<span class="comment">-- Отрисовка текста и FPS</span>
+master.drawSystemText("Привет, мир!", 100, 100, 255, 255, 255, 30)
+master.drawFPS(20, 20)
 </pre>
-
-                <h2 id="docs-render">2. Сверхбыстрый Рендер (SpriteBatch)</h2>
-                <p>Для отрисовки тысяч объектов используйте плоские функции батчера в обход накладных расходов ООП.</p>
-<pre>
-local batch = nil
-
-<span class="comment">-- Инициализация (делать 1 раз!)</span>
-local tex = master.createCanvas(10, 10)
-batch = master.createSpriteBatch(tex)
-
-function master.draw()
-    batch:clear()
-    master.setBatch(batch) <span class="comment">-- Передаем указатель в C++</span>
-    
-    <span class="comment">-- Отрисовка 10,000 объектов мгновенно</span>
-    for i=1, 10000 do
-        <span class="comment">-- (x, y, w, h, r, g, b, alpha)</span>
-        master.addBatchFast(x, y, 16, 16, 255, 0, 0, 255)
-    end
-    
-    batch:draw()
-end
-</pre>
-
-                <h2 id="docs-math">3. Продвинутая математика</h2>
-                <p>Вычисления, перенесенные на сторону C++ для максимальной производительности.</p>
-<pre>
-local dist = master.distance(x1, y1, x2, y2)
-local angle = master.getAngleDeg(x1, y1, x2, y2)
-local nx, ny = master.moveAtAngle(x, y, angle, distance)
-local lerped = master.lerp(a, b, t)
-local rand = master.randomFloat(0.5, 2.5)
-
-<span class="comment">-- Проверка коллизий</span>
-local hit = master.rectIntersect(x1, y1, w1, h1, x2, y2, w2, h2)
-</pre>
-
-                <h2 id="docs-ecs">4. Фреймворк: ECS и Сцены</h2>
-                <p>Движок имеет встроенный архитектурный фреймворк для управления жизненным циклом сущностей.</p>
-<pre>
-<span class="comment">-- Создание сущности</span>
-master.ecs.create({
-    type = "player",
-    x = 100, y = 100,
-    update = function(self, dt)
-        self.x = self.x + 100 * dt
-    end
-})
-
-<span class="comment">-- В master.draw() необходимо вызвать обновление:</span>
-master.ecs.update(master.dt)
-
-<span class="comment">-- Сцены</span>
-master.scenes.switch(menu_scene)
-</pre>
-
-                <h2 id="docs-particles">5. Система Частиц Pro</h2>
-                <p>Аппаратные частицы с гравитацией, трением, вращением и плавным переходом цвета (Color Fade).</p>
-<pre>
-<span class="comment">-- (x, y, vx, vy, life, start_size, end_size, start_R, start_G, start_B, start_A, end_R, end_G, end_B, end_A, spin, gravity, friction)</span>
-
-master.emitParticlePro(cx, cy, vx, vy, 1.5, 
-    15, 0,           <span class="comment">-- Размер (уменьшается)</span>
-    255, 50, 0, 255, <span class="comment">-- Стартовый цвет (Красный)</span>
-    100, 0, 0, 0,    <span class="comment">-- Конечный цвет (Темный прозрачный)</span>
-    180, 0.5, 1.5)   <span class="comment">-- Вращение, гравитация, трение</span>
-
-<span class="comment">-- Не забудьте вызвать отрисовку частиц в master.draw()</span>
-master.updateAndDrawParticles()
-</pre>
-
+                <p>Чтобы узнать о рендеринге 50,000 спрайтов, физике Box2D и мультиплеере, перейдите в <a href="api.html" style="color: var(--primary); text-decoration: none;">полный справочник API</a>.</p>
             </section>
         </main>
     </div>
