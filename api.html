@@ -63,21 +63,21 @@
         <a href="#input">Ввод (Тач, Геймпад, Текст)</a>
         <a href="#render-basic">Базовый Рендер</a>
         <a href="#render-sprites">Спрайты и Текстуры</a>
-        <a href="#hypercar">Hypercar Batching</a>
-        <a href="#camera">Камера и Эффекты</a>
+        <a href="#hypercar">Hypercar & DOD Batching</a>
+        <a href="#camera">Камера и Culling</a>
         <a href="#audio">Звук и Музыка</a>
         <a href="#math">Продвинутая Математика</a>
         <a href="#network">Сеть (ENet)</a>
         <a href="#db">База данных (SQLite)</a>
         <a href="#crypto">Криптография и Сохранения</a>
-        <a href="#framework">ECS, Сцены и Таймеры</a>
+        <a href="#framework">ECS, Grid и Сцены</a>
         <a href="#box2d">Box2D Физика</a>
         <a href="#secrets">Секретные флаги</a>
     </aside>
 
     <main>
         <h1>Master Engine API</h1>
-        <p class="subtitle">Полный справочник по всем функциям движка (v7.6.3).</p>
+        <p class="subtitle">Полный справочник по всем функциям движка (v7.8.0 Data-Oriented Behemoth).</p>
 
         <section id="system">
             <h2 class="section-title">Система и Утилиты</h2>
@@ -257,8 +257,8 @@
         </section>
 
         <section id="hypercar">
-            <h2 class="section-title">Bypass Protocol: Hypercar Batching</h2>
-            <p>Система аппаратного рендера геометрии (до 50,000+ объектов). Избегайте ООП при отрисовке, используйте Bypass функции.</p>
+            <h2 class="section-title">Hypercar & Data-Oriented Batching</h2>
+            <p>Система аппаратного рендера геометрии (до 100,000+ объектов). Избегайте ООП при отрисовке, используйте плоские массивы.</p>
 
             <div class="api-block">
                 <div class="api-signature">master.createSpriteBatch(texture_ptr) -> BatchObject</div>
@@ -274,23 +274,34 @@
                 <div class="api-signature">master.addBatchFast(x, y, w, h, r, g, b, a)</div>
                 <div class="api-desc">Сверхскоростная (плоская) функция добавления прямоугольника/спрайта в буфер видеокарты.</div>
             </div>
+
+            <div class="api-block">
+                <div class="api-signature">master.addBatchArraysFlat(xs_table, ys_table, w, h, r, g, b, a, count)</div>
+                <div class="api-desc"><b>(The Array Bridge)</b>. Ультимативный Data-Oriented метод. Принимает целиком две таблицы с координатами и отрисовывает десятки тысяч объектов за один вызов к C++. Избавляет от узкого горлышка (циклов `for` в Lua при рендере).</div>
+            </div>
 <pre>
-<span class="comment">-- Как использовать Батч (ООП методы тоже работают, но они медленнее):</span>
+<span class="comment">-- Пример Data-Oriented рендера 40,000 частиц:</span>
+local xs = {10, 50, 100, ...} <span class="comment">-- 40k элементов</span>
+local ys = {20, 60, 110, ...}
+
 batch:clear()
 master.setBatch(batch)
-for i=1, 30000 do
-    master.addBatchFast(x, y, 16, 16, 255, 255, 255, 255)
-end
+master.addBatchArraysFlat(xs, ys, 8, 8, 255, 0, 0, 255, 40000)
 batch:draw()
 </pre>
         </section>
 
         <section id="camera">
-            <h2 class="section-title">Камера, Канвасы и Эффекты</h2>
+            <h2 class="section-title">Камера, Culling и Эффекты</h2>
             
             <div class="api-block">
                 <div class="api-signature">master.setCamera(x, y, zoom) / master.resetCamera()</div>
                 <div class="api-desc">Сдвигает и масштабирует весь рендер. Обычно передаются координаты игрока. <code>resetCamera()</code> сбрасывает настройки (нужно вызывать перед отрисовкой UI).</div>
+            </div>
+
+            <div class="api-block">
+                <div class="api-signature">master.isOnScreen(x, y, w, h) -> bool</div>
+                <div class="api-desc"><b>Frustum Culling:</b> Быстрая проверка на стороне C++, попадает ли объект в текущий объектив камеры (с учетом зума и тряски экрана). Позволяет пропускать тяжелую математику и рендер для невидимых объектов.</div>
             </div>
 
             <div class="api-block">
@@ -353,13 +364,18 @@ batch:draw()
             </div>
 
             <div class="api-block">
-                <div class="api-signature">master.moveAtAngle(x, y, angle_deg, distance) -> new_x, new_y</div>
+                     <div class="api-signature">master.moveAtAngle(x, y, angle_deg, distance) -> new_x, new_y</div>
                 <div class="api-desc">Вычисляет новые координаты при движении в определенном направлении.</div>
             </div>
 
             <div class="api-block">
                 <div class="api-signature">master.lerp(a, b, t) / master.lerpAngle(a, b, t) / master.colorLerp(r1,g1,b1, r2,g2,b2, t)</div>
                 <div class="api-desc">Линейная интерполяция значений, углов (с правильным переходом через 360) и цветов.</div>
+            </div>
+
+            <div class="api-block">
+                <div class="api-signature">master.randomFloat(min, max) / master.randomInt(min, max)</div>
+                <div class="api-desc">Сверхбыстрые генераторы случайных чисел, работающие на уровне ядра движка (быстрее, чем math.random).</div>
             </div>
 
             <div class="api-block">
@@ -436,6 +452,11 @@ batch:draw()
             </div>
 
             <div class="api-block">
+                <div class="api-signature">master.base64Encode(string) -> string / master.base64Decode(string) -> string</div>
+                <div class="api-desc">Кодирование и декодирование любых строк в формат Base64. Полезно для упаковки бинарных данных или обфускации сохранений.</div>
+            </div>
+
+            <div class="api-block">
                 <div class="api-signature">master.hashString(text) -> hex_string</div>
                 <div class="api-desc">Возвращает SHA-256 хэш строки.</div>
             </div>
@@ -447,11 +468,16 @@ batch:draw()
         </section>
 
         <section id="framework">
-            <h2 class="section-title">Core Framework (Lua Подсистема)</h2>
+            <h2 class="section-title">Core Framework (ECS, Grid, Сцены)</h2>
             
             <div class="api-block">
                 <div class="api-signature">master.ecs.create({components...}) / master.ecs.update(dt) / master.ecs.draw()</div>
                 <div class="api-desc">Встроенная Entity-Component-System. У каждой сущности могут быть функции <code>update(self, dt)</code> и <code>draw(self)</code>. Установка <code>entity.dead = true</code> удалит её.</div>
+            </div>
+
+            <div class="api-block">
+                <div class="api-signature">master.grid.size / master.grid.insert(id, x, y) / master.grid.getNearby(x, y) / master.grid.clear()</div>
+                <div class="api-desc"><b>Spatial Hash Grid (Пространственное хеширование):</b> Делит игровой мир на квадраты размером <code>size</code>. Позволяет мгновенно получать список соседей (например, врагов) вокруг конкретной точки, избегая проверки расстояния до всех объектов на карте (O(n) -> O(1)). Вызывайте <code>clear()</code> каждый кадр перед новым заполнением.</div>
             </div>
 
             <div class="api-block">
@@ -505,11 +531,11 @@ batch:draw()
             
             <div class="api-block" style="border-color: rgba(239, 68, 68, 0.3);">
                 <div class="api-signature">!master.hidedErdisplay</div>
-                <div class="api-desc"><b>Спец. Режим (Игнорирование крашей):</b> Если написать эту точную строку в любом месте файла <code>main.lua</code> в виде комментария (например: <code>-- !master.hidedErdisplay</code>), движок не будет показывать "Синего Экрана Смерти". При возникновении критических ошибок Lua, движок <b>не покажет</b> экран с логом ошибки.</div>
+                <div class="api-desc"><b>Режим Бога (Игнорирование крашей):</b> Если написать эту точную строку в любом месте файла <code>main.lua</code> в виде комментария (например: <code>-- !master.hidedErdisplay</code>), C++ парсер движка отключит защиту "Синего Экрана Смерти". При возникновении критических ошибок Lua, движок <b>не покажет</b> экран с логом ошибки, а попытается проглотить её и продолжить работу (может привести к нестабильности).</div>
             </div>
         </section>
 
     </main>
 
 </body>
-</html>
+    </html>
