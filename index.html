@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Master Engine | Mobile Game Framework</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono&display=swap');
+
+        :root {
+            --bg: #09090b;
+            --surface: #18181b;
+            --border: #27272a;
+            --primary: #10b981; /* Неоновый зеленый */
+            --accent: #3b82f6; /* Синий */
+            --text: #f4f4f5;
+            --text-dim: #a1a1aa;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; display: flex; flex-direction: column; min-height: 100vh; }
+
+        /* NAVBAR */
+        nav { position: fixed; top: 0; width: 100%; background: rgba(9, 9, 11, 0.9); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); z-index: 1000; display: flex; justify-content: space-between; padding: 1rem 5%; align-items: center; }
+        .logo { font-weight: 800; font-size: 1.5rem; letter-spacing: -0.5px; background: linear-gradient(to right, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .nav-links a { color: var(--text); text-decoration: none; margin-left: 2rem; font-weight: 600; transition: color 0.2s; }
+        .nav-links a:hover { color: var(--primary); }
+
+        /* HERO */
+        .hero { margin-top: 80px; padding: 6rem 5% 4rem; text-align: center; border-bottom: 1px solid var(--border); }
+        .hero h1 { font-size: clamp(2.5rem, 8vw, 4.5rem); font-weight: 800; line-height: 1.1; margin-bottom: 1.5rem; }
+        .hero p { font-size: 1.2rem; color: var(--text-dim); max-width: 600px; margin: 0 auto 2rem; }
+        .btn { display: inline-block; padding: 0.8rem 2rem; background: var(--text); color: var(--bg); font-weight: 600; border-radius: 8px; text-decoration: none; transition: 0.2s; margin: 0.5rem; }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(255,255,255,0.1); }
+        .btn-primary { background: var(--primary); color: #000; }
+        .btn-primary:hover { box-shadow: 0 5px 20px rgba(16, 185, 129, 0.3); }
+
+        /* MAIN CONTENT LAYOUT */
+        .content-wrapper { display: flex; flex: 1; max-width: 1400px; margin: 0 auto; width: 100%; padding: 2rem 5%; gap: 3rem; }
+        
+        /* SIDEBAR (ДОКУМЕНТАЦИЯ) */
+        aside { width: 250px; flex-shrink: 0; position: sticky; top: 100px; height: calc(100vh - 100px); overflow-y: auto; padding-right: 1rem; }
+        aside h3 { margin-bottom: 1rem; color: var(--text); font-size: 1.1rem; }
+        aside a { display: block; color: var(--text-dim); text-decoration: none; margin-bottom: 0.8rem; font-size: 0.95rem; transition: color 0.2s; }
+        aside a:hover { color: var(--primary); }
+
+        /* CONTENT */
+        main { flex: 1; min-width: 0; }
+        section { margin-bottom: 4rem; }
+        h2 { font-size: 2rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; }
+        h3 { font-size: 1.3rem; margin: 2rem 0 1rem; color: var(--accent); }
+        p { margin-bottom: 1rem; color: var(--text-dim); }
+        
+        pre { background: var(--surface); border: 1px solid var(--border); padding: 1.5rem; border-radius: 8px; font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; overflow-x: auto; color: #e5e5e5; margin-bottom: 1.5rem; }
+        code { font-family: 'JetBrains Mono', monospace; background: var(--surface); padding: 0.2rem 0.4rem; border-radius: 4px; font-size: 0.9em; color: var(--primary); }
+        .comment { color: #6b7280; }
+        
+        /* DOWNLOAD SECTION */
+        .download-box { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 2rem; text-align: center; margin-top: 2rem; }
+        .download-box h3 { margin-top: 0; }
+
+        @media (max-width: 900px) {
+            .content-wrapper { flex-direction: column; }
+            aside { width: 100%; position: static; height: auto; border-bottom: 1px solid var(--border); padding-bottom: 2rem; }
+            .nav-links { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="logo">MASTER ENGINE</div>
+        <div class="nav-links">
+            <a href="#about">О движке</a>
+            <a href="#docs">Документация</a>
+            <a href="#download">Скачать</a>
+            <a href="https://t.me/talkswitch">Сообщество</a>
+        </div>
+    </nav>
+
+    <header class="hero">
+        <h1>Свой движок.<br>В твоем кармане.</h1>
+        <p>Ультимативный C++ фреймворк для Android. Пиши логику на Lua, рендери 50,000+ объектов через аппаратный Vertex Batching при 60 FPS.</p>
+        <a href="#download" class="btn btn-primary">Скачать APK v7.6.3</a>
+        <a href="#docs" class="btn">Читать документацию</a>
+    </header>
+
+    <div class="content-wrapper">
+        <aside>
+            <h3>Навигация</h3>
+            <a href="#about">🔥 Бенчмарки и Фичи</a>
+            <a href="#download">📥 Скачать движок</a>
+            
+            <h3 style="margin-top: 2rem;">API Документация</h3>
+            <a href="#docs-core">Основы (Core)</a>
+            <a href="#docs-render">Рендер и SpriteBatch</a>
+            <a href="#docs-math">Продвинутая математика</a>
+            <a href="#docs-ecs">Фреймворк (ECS, Сцены)</a>
+            <a href="#docs-particles">Система частиц Pro</a>
+        </aside>
+
+        <main>
+            <section id="about">
+                <h2>Создан оптимизированным</h2>
+                <p>Master Engine использует технологию <b>Bypass Protocol</b> для обхода узких мест в объектно-ориентированном программировании Lua. Все тяжелые вычисления, сортировка Z-Index и управление памятью происходят строго на уровне C++ NDK.</p>
+                <ul>
+                    <li style="color: var(--text-dim); margin-left: 1.5rem;"><b>56,000+ спрайтов</b> на экране в режиме "Только рендер" (Snapdragon 7s Gen 2).</li>
+                    <li style="color: var(--text-dim); margin-left: 1.5rem;"><b>31,000+ сущностей</b> с тяжелой логикой и рендером.</li>
+                    <li style="color: var(--text-dim); margin-left: 1.5rem;"><b>Zero Allocation:</b> память под вершинные буферы выделяется 1 раз при старте.</li>
+                </ul>
+            </section>
+
+            <section id="download">
+                <h2>Установка</h2>
+                <p>Движок представляет собой приложение-проигрыватель. Вы скачиваете APK, а свои игры пишете в файле <code>main.lua</code> и запаковываете в <code>.m</code> (переименованный .zip архив).</p>
+                <div class="download-box">
+                    <h3>Master Engine Player v7.6.3</h3>
+                    <p>Требуется Android 8.0 или выше. Поддержка геймпадов и мультитача включена.</p>
+                    <a href="#" class="btn btn-primary" onclick="alert('Скоро здесь будет ссылка на APK с GitHub Releases!')">Скачать (.apk)</a>
+                </div>
+            </section>
+
+            <section id="docs">
+                <h2 id="docs-core">1. Основы (Core API)</h2>
+                <p>Главная функция движка, которая вызывается каждый кадр — <code>master.draw()</code>. В ней пишется вся логика и отрисовка.</p>
+<pre>
+<span class="comment">-- Получить Delta Time (время между кадрами для плавной логики)</span>
+local dt = master.dt
+
+<span class="comment">-- Очистка экрана (R, G, B)</span>
+master.clear(15, 15, 20)
+
+<span class="comment">-- Базовая отрисовка без аппаратного ускорения</span>
+master.drawRect(x, y, w, h, r, g, b)
+master.drawCircle(x, y, radius, r, g, b)
+master.drawSystemText("Текст", x, y, r, g, b, size)
+master.drawFPS(x, y)
+</pre>
+
+                <h2 id="docs-render">2. Сверхбыстрый Рендер (SpriteBatch)</h2>
+                <p>Для отрисовки тысяч объектов используйте плоские функции батчера в обход ООП.</p>
+<pre>
+local batch = nil
+
+<span class="comment">-- Инициализация (делать 1 раз!)</span>
+local tex = master.createCanvas(10, 10)
+batch = master.createSpriteBatch(tex)
+
+function master.draw()
+    batch:clear()
+    master.setBatch(batch) <span class="comment">-- Передаем указатель в C++</span>
+    
+    <span class="comment">-- Отрисовка 10,000 объектов мгновенно</span>
+    for i=1, 10000 do
+        <span class="comment">-- (x, y, w, h, r, g, b, alpha)</span>
+        master.addBatchFast(x, y, 16, 16, 255, 0, 0, 255)
+    end
+    
+    batch:draw()
+end
+</pre>
+
+                <h2 id="docs-math">3. Продвинутая математика</h2>
+                <p>Вычисления, перенесенные на сторону C++ для максимальной производительности.</p>
+<pre>
+local dist = master.distance(x1, y1, x2, y2)
+local angle = master.getAngleDeg(x1, y1, x2, y2)
+local nx, ny = master.moveAtAngle(x, y, angle, distance)
+local lerped = master.lerp(a, b, t)
+local rand = master.randomFloat(0.5, 2.5)
+
+<span class="comment">-- Проверка коллизий</span>
+local hit = master.rectIntersect(x1, y1, w1, h1, x2, y2, w2, h2)
+</pre>
+
+                <h2 id="docs-ecs">4. Фреймворк: ECS и Сцены</h2>
+                <p>Движок имеет встроенный легковесный фреймворк для архитектуры вашей игры.</p>
+<pre>
+<span class="comment">-- Создание сущности</span>
+master.ecs.create({
+    type = "player",
+    x = 100, y = 100,
+    update = function(self, dt)
+        self.x = self.x + 100 * dt
+    end
+})
+
+<span class="comment">-- В master.draw() необходимо вызвать обновление:</span>
+master.ecs.update(master.dt)
+
+<span class="comment">-- Сцены</span>
+master.scenes.switch(menu_scene)
+</pre>
+
+                <h2 id="docs-particles">5. Система Частиц Pro</h2>
+                <p>Аппаратные частицы с гравитацией, трением, вращением и плавным переходом цвета (Color Fade).</p>
+<pre>
+<span class="comment">-- (x, y, vx, vy, life, start_size, end_size, start_R, start_G, start_B, start_A, end_R, end_G, end_B, end_A, spin, gravity, friction)</span>
+
+master.emitParticlePro(cx, cy, vx, vy, 1.5, 
+    15, 0,           <span class="comment">-- Размер (уменьшается)</span>
+    255, 50, 0, 255, <span class="comment">-- Стартовый цвет (Красный)</span>
+    100, 0, 0, 0,    <span class="comment">-- Конечный цвет (Темный прозрачный)</span>
+    180, 0.5, 1.5)   <span class="comment">-- Вращение, гравитация, трение</span>
+
+<span class="comment">-- Не забудьте вызвать отрисовку частиц в master.draw()</span>
+master.updateAndDrawParticles()
+</pre>
+
+            </section>
+        </main>
+    </div>
+
+    <footer style="text-align: center; padding: 2rem; border-top: 1px solid var(--border); color: var(--text-dim); background: var(--surface);">
+        <p>Master Engine v7.6.3. Built by Enthusiasts. Powered by Termux & NDK.</p>
+    </footer>
+
+</body>
+</html>
